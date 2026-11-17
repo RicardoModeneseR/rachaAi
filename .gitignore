@@ -1,0 +1,21 @@
+# Segredos: a chave privada vive só aqui
+.env
+.env.local
+.env.*.local
+
+# Dependências
+node_modules/
+
+# Hardhat (gerados na compilação/testes)
+contracts/artifacts/
+contracts/cache/
+contracts/coverage/
+contracts/coverage.json
+contracts/typechain-types/
+
+# Front-end (build da Vite)
+frontend/dist/
+
+# Sistema/editor
+.DS_Store
+.vscode/
