@@ -79,7 +79,7 @@ contract Grupo {
 
     /// @notice Só a fábrica chama (dentro de aceitarConvite).
     function adicionarMembro(address m) external onlyFactory naoEhMembro(m) cabeMaisUm {
-        // TODO Fase 1: _adicionarMembro(m);
+        _adicionarMembro(m);
     }
 
     /// @notice Registra uma despesa paga por msg.sender e dividida entre `participantes`.
@@ -88,11 +88,38 @@ contract Grupo {
         uint256 valor,
         address[] calldata participantes
     ) external somenteMembro valorPositivo(valor) {
-        // TODO Fase 1:
-        // 1. participantes não vazio, todos membros, sem repetidos
-        // 2. parte = valor / n (o resto valor % n fica com o pagador)
-        // 3. divida[p][msg.sender] += parte, para cada p != msg.sender
-        // 4. despesas.push(...) e emit DespesaAdicionada(...)
+        uint256 n = participantes.length;
+        require(n > 0, "Sem participantes");
+
+        // Validar: todos são membros e não há repetidos
+        for (uint256 i = 0; i < n; i++) {
+            require(ehMembro[participantes[i]], "Participante nao eh membro");  
+            for (uint256 j = i + 1; j < n; j++) {
+                require(participantes[i] != participantes[j], "Participantes repetidos");
+            }
+        }
+
+        // Dividir e lançar as dívidas (o resto vai para o pagador)
+        uint256 part = valor / n;
+        for (uint256 i = 0; i < n; i++) {
+            address p = participantes[i];
+            if (p != msg.sender) {
+                divida[p][msg.sender] += part;
+            }
+        }
+
+        // Guardar a despesa
+        uint256 id = despesas.length;
+        Despesa storage d = despesas.push();
+        d.id = id;
+        d.descricao = descricao;
+        d.valor = valor;
+        d.pagador = msg.sender;
+        d.participantes = participantes;
+        d.data = block.timestamp;
+
+        // Avisar o front-end
+        emit DespesaAdicionada(id, msg.sender, valor, descricao, participantes);
     }
 
     /// @notice Chamada pelo CREDOR, confirmando que recebeu `valor` do `devedor`.
@@ -101,10 +128,9 @@ contract Grupo {
         somenteMembro
         valorPositivo(valor)
     {
-        // TODO Fase 1:
-        // require(divida[devedor][msg.sender] >= valor, ...);
-        // divida[devedor][msg.sender] -= valor;
-        // emit DividaQuitada(devedor, msg.sender, valor);
+        require(divida[devedor][msg.sender] >= valor, "Valor maior que a divida");
+        divida[devedor][msg.sender] -= valor;
+        emit DividaQuitada(devedor, msg.sender, valor);
     }
 
     // Leitura
@@ -122,7 +148,12 @@ contract Grupo {
 
     /// @notice Positivo = tem a receber; negativo = está devendo.
     function saldoDe(address m) external view returns (int256 saldo) {
-        // TODO Fase 1: soma divida[outro][m] - divida[m][outro] para cada membro
+        uint256 n = membros.length;
+        for (uint256 i = 0; i < n; i++) {
+            address outro = membros[i];
+            saldo += int256(divida[outro][m]); // o que 'outro' deve a m
+            saldo -= int256(divida[m][outro]); // o que m deve a 'outro'
+        }
     }
 
     // Internas
