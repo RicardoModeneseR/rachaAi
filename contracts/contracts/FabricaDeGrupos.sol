@@ -78,10 +78,14 @@ contract FabricaDeGrupos {
     }
 
     function aceitarConvite(address grupo) external grupoExiste(grupo) temConvite(grupo) {
-        // TODO Fase 1:
-        // delete convitePendente[grupo][msg.sender];
-        // Grupo(grupo).adicionarMembro(msg.sender);   // chamada fábrica -> filho
-        // gruposDoUsuario[msg.sender].push(grupo);
+        // apagar o convite pendente
+        delete convitePendente[grupo][msg.sender];
+
+        // Chamada fábrica -> filho: adiciona o convidado como membro
+        Grupo(grupo).adicionarMembro(msg.sender);
+
+        // Registra o grupo na lista do usuário
+        gruposDoUsuario[msg.sender].push(grupo);
     }
 
     // Leitura
