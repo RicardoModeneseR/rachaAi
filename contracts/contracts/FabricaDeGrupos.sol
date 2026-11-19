@@ -10,18 +10,15 @@ import "./Grupo.sol";
 /// @dev ESQUELETO v0 (Fase 0): assinaturas, eventos e modifiers definitivos;
 ///      a lógica das funções marcadas com TODO entra na Fase 1.
 contract FabricaDeGrupos {
-    // ------------------------------------------------------------------
+
     // Estado
-    // ------------------------------------------------------------------
     address[] public grupos;
     mapping(address => bool) public ehGrupo;
     mapping(address => address[]) private gruposDoUsuario;
     /// convitePendente[grupo][convidado]
     mapping(address => mapping(address => bool)) public convitePendente;
 
-    // ------------------------------------------------------------------
     // Eventos
-    // ------------------------------------------------------------------
     event GrupoCriado(address indexed grupo, address indexed criador, string nome);
     /// `convidado` é indexed para o front filtrar: filters.ConviteEnviado(null, meuEndereco)
     event ConviteEnviado(
@@ -30,9 +27,7 @@ contract FabricaDeGrupos {
         address indexed quemConvidou
     );
 
-    // ------------------------------------------------------------------
     // Modifiers
-    // ------------------------------------------------------------------
     modifier nomeValido(string calldata nome) {
         require(bytes(nome).length > 0, "Nome vazio");
         _;
@@ -54,9 +49,7 @@ contract FabricaDeGrupos {
         _;
     }
 
-    // ------------------------------------------------------------------
     // Escrita
-    // ------------------------------------------------------------------
     function criarGrupo(string calldata nome) external nomeValido(nome) {
         // TODO Fase 1:
         // Grupo g = new Grupo(nome, msg.sender, address(this));
@@ -81,9 +74,7 @@ contract FabricaDeGrupos {
         // gruposDoUsuario[msg.sender].push(grupo);
     }
 
-    // ------------------------------------------------------------------
     // Leitura
-    // ------------------------------------------------------------------
     function getGruposDoUsuario(address u) external view returns (address[] memory) {
         return gruposDoUsuario[u];
     }

@@ -7,9 +7,6 @@ pragma solidity ^0.8.28;
 /// @dev ESQUELETO v0 (Fase 0): assinaturas, eventos e modifiers definitivos;
 ///      a lógica das funções marcadas com TODO entra na Fase 1.
 contract Grupo {
-    // ------------------------------------------------------------------
-    // Tipos
-    // ------------------------------------------------------------------
     struct Despesa {
         uint256 id;
         string descricao;
@@ -19,9 +16,6 @@ contract Grupo {
         uint256 data; // block.timestamp
     }
 
-    // ------------------------------------------------------------------
-    // Estado
-    // ------------------------------------------------------------------
     uint256 public constant MAX_MEMBROS = 20; // limita o tamanho dos laços e o gas
 
     string public nome;
@@ -31,14 +25,12 @@ contract Grupo {
     address[] private membros;
     mapping(address => bool) public ehMembro;
 
-    /// divida[devedor][credor] = centavos que `devedor` deve a `credor`
+    // divida[devedor][credor] = centavos que `devedor` deve a `credor`
     mapping(address => mapping(address => uint256)) public divida;
 
     Despesa[] private despesas;
 
-    // ------------------------------------------------------------------
     // Eventos (campos `indexed` podem ser filtrados no front)
-    // ------------------------------------------------------------------
     event MembroAdicionado(address indexed membro);
     event DespesaAdicionada(
         uint256 indexed id,
@@ -49,9 +41,7 @@ contract Grupo {
     );
     event DividaQuitada(address indexed devedor, address indexed credor, uint256 valor);
 
-    // ------------------------------------------------------------------
     // Modifiers
-    // ------------------------------------------------------------------
     modifier onlyFactory() {
         require(msg.sender == fabrica, "Somente a fabrica");
         _;
@@ -77,9 +67,7 @@ contract Grupo {
         _;
     }
 
-    // ------------------------------------------------------------------
     // Constructor
-    // ------------------------------------------------------------------
     constructor(string memory _nome, address _criador, address _fabrica) {
         nome = _nome;
         criador = _criador;
@@ -87,9 +75,7 @@ contract Grupo {
         _adicionarMembro(_criador);
     }
 
-    // ------------------------------------------------------------------
     // Escrita
-    // ------------------------------------------------------------------
 
     /// @notice Só a fábrica chama (dentro de aceitarConvite).
     function adicionarMembro(address m) external onlyFactory naoEhMembro(m) cabeMaisUm {
@@ -121,9 +107,7 @@ contract Grupo {
         // emit DividaQuitada(devedor, msg.sender, valor);
     }
 
-    // ------------------------------------------------------------------
     // Leitura
-    // ------------------------------------------------------------------
     function getMembros() external view returns (address[] memory) {
         return membros;
     }
@@ -141,9 +125,7 @@ contract Grupo {
         // TODO Fase 1: soma divida[outro][m] - divida[m][outro] para cada membro
     }
 
-    // ------------------------------------------------------------------
     // Internas
-    // ------------------------------------------------------------------
     function _adicionarMembro(address m) private {
         membros.push(m);
         ehMembro[m] = true;
