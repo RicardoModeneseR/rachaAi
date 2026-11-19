@@ -51,10 +51,17 @@ contract FabricaDeGrupos {
 
     // Escrita
     function criarGrupo(string calldata nome) external nomeValido(nome) {
-        // TODO Fase 1:
-        // Grupo g = new Grupo(nome, msg.sender, address(this));
-        // grupos.push, ehGrupo = true, gruposDoUsuario[msg.sender].push
-        // emit GrupoCriado(address(g), msg.sender, nome);
+        // Cria (faz deploy de) um novo contrato Grupo
+        Grupo novoGrupo = new Grupo(nome, msg.sender, address(this));
+        address enderecoGrupo = address(novoGrupo);
+
+        // Registra o grupo na fábrica
+        grupos.push(enderecoGrupo);
+        ehGrupo[enderecoGrupo] = true;
+        gruposDoUsuario[msg.sender].push(enderecoGrupo);
+
+        // Avisa o front-end
+        emit GrupoCriado(enderecoGrupo, msg.sender, nome);
     }
 
     function convidar(address grupo, address convidado)
