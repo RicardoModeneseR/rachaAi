@@ -78,7 +78,7 @@ contract FabricaDeGrupos {
     }
 
     function aceitarConvite(address grupo) external grupoExiste(grupo) temConvite(grupo) {
-        // apagar o convite pendente
+        // Apaga o convite
         delete convitePendente[grupo][msg.sender];
 
         // Chamada fábrica -> filho: adiciona o convidado como membro
@@ -103,6 +103,11 @@ contract FabricaDeGrupos {
         view
         returns (address[] memory gruposDoU, int256[] memory saldos)
     {
-        // TODO Fase 1: laço em gruposDoUsuario[u] chamando Grupo(g).saldoDe(u)
+        gruposDoU = gruposDoUsuario[u];
+        saldos = new int256[](gruposDoU.length);
+
+        for (uint256 i = 0; i < gruposDoU.length; i++) {
+            saldos[i] = Grupo(gruposDoU[i]).saldoDe(u);
+        }
     }
 }
