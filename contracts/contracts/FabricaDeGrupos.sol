@@ -69,9 +69,12 @@ contract FabricaDeGrupos {
         grupoExiste(grupo)
         somenteMembroDoGrupo(grupo)
     {
-        // TODO Fase 1:
-        // convitePendente[grupo][convidado] = true;
-        // emit ConviteEnviado(grupo, convidado, msg.sender);
+        // quando convidar alguém que ja é membro
+        require(!Grupo(grupo).ehMembro(convidado), "Ja eh membro");
+
+        // grupo → convidado → tem convite
+        convitePendente[grupo][convidado] = true;
+        emit ConviteEnviado(grupo, convidado, msg.sender);
     }
 
     function aceitarConvite(address grupo) external grupoExiste(grupo) temConvite(grupo) {
