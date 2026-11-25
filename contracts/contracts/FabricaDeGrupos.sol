@@ -7,8 +7,8 @@ import "./Grupo.sol";
 /// @notice Cria contratos Grupo, gerencia convites e agrega saldos.
 ///         Chama o filho em três lugares: aceitarConvite (adicionarMembro),
 ///         resumoDoUsuario (saldoDe) e o modifier somenteMembroDoGrupo (ehMembro).
-/// @dev ESQUELETO v0 (Fase 0): assinaturas, eventos e modifiers definitivos;
-///      a lógica das funções marcadas com TODO entra na Fase 1.
+/// @dev Só aceita chamar contratos que ela mesma criou (modifier grupoExiste).
+
 contract FabricaDeGrupos {
 
     // Estado

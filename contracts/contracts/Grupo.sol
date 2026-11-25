@@ -4,8 +4,9 @@ pragma solidity ^0.8.28;
 /// @title Grupo — contrato filho, um por república/grupo
 /// @notice Registra membros, despesas e quem deve quanto a quem.
 ///         Valores em CENTAVOS de real (uint256). Não movimenta ETH.
-/// @dev ESQUELETO v0 (Fase 0): assinaturas, eventos e modifiers definitivos;
-///      a lógica das funções marcadas com TODO entra na Fase 1.
+/// @dev Criado pela FabricaDeGrupos (um contrato por grupo). Só a fábrica
+///      adiciona membros (onlyFactory). Máximo de MAX_MEMBROS membros.
+
 contract Grupo {
     struct Despesa {
         uint256 id;

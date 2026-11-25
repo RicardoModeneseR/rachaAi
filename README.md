@@ -6,7 +6,7 @@ A DApp **só registra valores**. Ela não movimenta ETH: o pagamento acontece po
 
 Projeto final da disciplina INF17402 (Blockchains e Smart Contracts).
 
-> **Status: Fase 0 concluída (esqueleto v0).** Os contratos já têm todas as funções, eventos e modifiers definitivos e compilam, mas a lógica de negócio ainda não foi escrita (veja [Andamento](#andamento)).
+> **Status: Fase 1 concluída.** Os contratos estão implementados e compilando. Próximos passos: testes unitários e deploy na Sepolia.
 
 | | |
 |---|---|
@@ -90,25 +90,34 @@ Os campos `indexed` servem para filtrar eventos no front, por exemplo `fabrica.f
 
 ### Mensagens de erro (modifiers)
 
+### Mensagens de erro
+
 São estas as mensagens que o front exibe quando uma transação reverte. Elas estão sem acento porque o Solidity só aceita acento em strings marcadas com `unicode"..."`.
 
-| Modifier | Contrato | Mensagem |
+| Onde | Contrato | Mensagem |
 |---|---|---|
-| `nomeValido` | Fábrica | `Nome vazio` |
-| `grupoExiste` | Fábrica | `Grupo inexistente` |
-| `somenteMembroDoGrupo` | Fábrica | `Somente membros` |
-| `temConvite` | Fábrica | `Sem convite` |
-| `onlyFactory` | Grupo | `Somente a fabrica` |
-| `naoEhMembro` | Grupo | `Ja eh membro` |
-| `cabeMaisUm` | Grupo | `Grupo cheio` |
-| `somenteMembro` | Grupo | `Somente membros` |
-| `valorPositivo` | Grupo | `Valor deve ser positivo` |
+| modifier `nomeValido` | Fábrica | `Nome vazio` |
+| modifier `grupoExiste` | Fábrica | `Grupo inexistente` |
+| modifier `somenteMembroDoGrupo` | Fábrica | `Somente membros` |
+| modifier `temConvite` | Fábrica | `Sem convite` |
+| `convidar` | Fábrica | `Ja eh membro` |
+| modifier `onlyFactory` | Grupo | `Somente a fabrica` |
+| modifier `naoEhMembro` | Grupo | `Ja eh membro` |
+| modifier `cabeMaisUm` | Grupo | `Grupo cheio` |
+| modifier `somenteMembro` | Grupo | `Somente membros` |
+| modifier `valorPositivo` | Grupo | `Valor deve ser positivo` |
+| `adicionarDespesa` | Grupo | `Sem participantes` |
+| `adicionarDespesa` | Grupo | `Participante nao eh membro` |
+| `adicionarDespesa` | Grupo | `Participantes repetidos` |
+| `confirmarQuitacao` | Grupo | `Valor maior que a divida` |
 
-### Regras de negócio (a implementar na Fase 1)
+### Regras de negócio
 
 1. **Divisão:** `parte = valor / n`. O resto (`valor % n`) fica com o pagador. Por exemplo, R$ 100,00 entre 3 pessoas gera uma dívida de 33,33 para cada um dos outros dois.
 2. **Pagador fora da lista:** se o pagador não estiver entre os participantes, cada participante deve a parte inteira a ele.
 3. **Soma zero:** a soma de `saldoDe` de todos os membros é sempre zero.
+4. **Participantes:** a lista não pode ser vazia, todos precisam ser membros e ninguém pode aparecer duas vezes.
+5. **Quitação:** é confirmada pelo **credor** (quem recebeu o Pix), e nunca acima do valor devido.
 
 ---
 
@@ -193,11 +202,11 @@ A ABI v0 já está em `frontend/src/abi/`. Quando rodar `npm create vite@latest`
 | Fase | Período | Status |
 |---|---|---|
 | 0 · Preparação | 16–17/nov | ✅ Estrutura, Hardhat configurado, esqueleto dos contratos e ABI v0 |
-| 1 · Construção | 18–23/nov | ⏳ Lógica dos contratos, testes do Grupo, ABI real (20/nov) |
-| 2 · Deploy e integração | 24–28/nov | ⏳ Testes da fábrica, cobertura, deploy na Sepolia (25/nov) |
+| 1 · Construção | 18–23/nov | ✅ Lógica dos dois contratos implementada |
+| 2 · Deploy e integração | 24–28/nov | 🔄 Testes, cobertura, `deploy.js`, deploy na Sepolia |
 | 3 · Testes ponta a ponta | 29/nov–01/dez | ⏳ |
 | 4 · Entrega | 02/dez | ⏳ |
 
-**Já está pronto nos contratos:** assinaturas, eventos, estado, todos os modifiers, o constructor do `Grupo` (que já adiciona o criador como membro) e as funções de leitura simples.
+**Já está pronto:** os dois contratos completos (todas as funções, eventos e modifiers).
 
-**Falta (Fase 1):** `criarGrupo`, `convidar`, `aceitarConvite`, `resumoDoUsuario`, `adicionarMembro`, `adicionarDespesa`, `confirmarQuitacao` e `saldoDe`. Cada uma está marcada com `// TODO Fase 1` no código.
+**Falta:** testes unitários, `scripts/deploy.js`, deploy na Sepolia e verificação no Etherscan.
