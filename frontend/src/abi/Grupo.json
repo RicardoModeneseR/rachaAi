@@ -280,6 +280,29 @@
     },
     {
       "inputs": [],
+      "name": "getDividas",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "devedores",
+          "type": "address[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "credores",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "valores",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getMembros",
       "outputs": [
         {

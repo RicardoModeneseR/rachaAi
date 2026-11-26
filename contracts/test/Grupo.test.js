@@ -196,4 +196,46 @@ describe("Grupo", function () {
             expect(await grupo.divida(membro2, membro1)).to.equal(3000);
         });
     });
+
+    describe("getDividasDoUsuario", function () {
+        it("Devolve listas vazias quando ninguem deve nada", async function () {
+            const { grupo } = await loadFixture(grupoComTresMembros);
+
+            const [devedores, credores, valores] = await grupo.getDividas();
+            expect(devedores).to.deep.equal([]);
+            expect(credores).to.deep.equal([]);
+            expect(valores).to.deep.equal([]);
+        });
+
+        it("Devolve todos os pares com dívida, iguais aos de divida(devedor, credor", async function () {
+            const { grupo, membro1, membro2, membro3 } = await loadFixture(grupoComTresMembros);
+
+            await grupo.connect(membro1).adicionarDespesa("Mercado", 9000, [membro1, membro2, membro3]);
+            await grupo.connect(membro2).adicionarDespesa("Pizza", 4000, [membro1, membro2]);
+
+            const [devedores, credores, valores] = await grupo.getDividas();
+
+            // ordem: percorre membros [membro1, membro2, membro3] como devedor, e depois como credor
+            expect(devedores).to.deep.equal([membro1.address, membro2.address, membro3.address]);
+            expect(credores).to.deep.equal([membro2.address, membro1.address, membro1.address]);
+            expect(valores).to.deep.equal([2000n, 3000n, 3000n]);
+
+            // cada par bate com a leitura individual do mapping
+            for (let k = 0; k < devedores.length; k++) {
+                expect(await grupo.divida(devedores[k], credores[k])).to.equal(valores[k]);
+            }
+        });
+
+        it("Um par quitado por completo some da lista", async function () {
+            const { grupo, membro1, membro2, membro3 } = await loadFixture(grupoComTresMembros);
+            await grupo.connect(membro1).adicionarDespesa("Mercado", 9000, [membro1, membro2, membro3]);
+
+            await grupo.connect(membro1).confirmarQuitacao(membro2, 3000); // membro2 quitou tudo
+
+            const [devedores, credores, valores] = await grupo.getDividas();
+            expect(devedores).to.deep.equal([membro3.address]);
+            expect(credores).to.deep.equal([membro1.address]);
+            expect(valores).to.deep.equal([3000n]);
+        });
+    });
 });
