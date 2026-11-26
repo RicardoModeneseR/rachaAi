@@ -11,7 +11,7 @@ Projeto final da disciplina INF17402 (Blockchains e Smart Contracts).
 | | |
 |---|---|
 | DApp | *em breve* |
-| Fábrica na Sepolia (Etherscan) | *em breve* |
+| Fábrica na Sepolia (Etherscan) | [`0xdD672f5a03D4AF91F4e0B1d85829bc2B2dC769bb`](https://sepolia.etherscan.io/address/0xdD672f5a03D4AF91F4e0B1d85829bc2B2dC769bb) |
 
 ---
 

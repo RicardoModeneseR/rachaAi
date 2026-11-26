@@ -50,17 +50,13 @@ export function useGrupo(enderecoGrupo, conta, signer) {
       );
       setMembros(membrosComSaldo);
 
-      // Matriz de dívidas entre todos os pares (devedor -> credor)
-      const listaDividas = [];
-      for (const devedor of listaMembros) {
-        for (const credor of listaMembros) {
-          if (devedor.toLowerCase() === credor.toLowerCase()) continue;
-          const valor = await grupoLeitura.divida(devedor, credor);
-          if (valor > 0n) {
-            listaDividas.push({ devedor, credor, valor });
-          }
-        }
-      }
+      // Todas as dívidas > 0 em uma chamada só (Grupo.getDividas)
+      const [devedores, credores, valores] = await grupoLeitura.getDividas();
+      const listaDividas = devedores.map((devedor, k) => ({
+        devedor,
+        credor: credores[k],
+        valor: valores[k],
+      }));
       setDividas(listaDividas);
 
       // Histórico via queryFilter a partir de BLOCO_DEPLOY
