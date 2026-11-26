@@ -157,6 +157,44 @@ contract Grupo {
         }
     }
 
+    /// @notice Todos os pares (devedor, credor) com dívida > 0, em uma chamada só.
+    function getDividas()
+        external
+        view
+        returns (address[] memory devedores, address[] memory credores, uint256[] memory valores)
+    {
+        uint256 n = membros.length;
+
+        // Contar quantas dívidas existem
+        uint256 total = 0;
+        for (uint256 i = 0; i < n; i++) {
+            for (uint256 j = 0; j < n; j++) {
+                if (divida[membros[i]][membros[j]] > 0) {
+                    total++;
+                }
+            }
+        }
+
+        // Criar arrays do tamanho certo
+        devedores = new address[](total);
+        credores = new address[](total);
+        valores = new uint256[](total);
+
+        // Preencher os arrays
+        uint256 index = 0;
+        for (uint256 i = 0; i < n; i++) {
+            for (uint256 j = 0; j < n; j++) {
+                uint256 valor = divida[membros[i]][membros[j]];
+                if (valor > 0) {
+                    devedores[index] = membros[i];
+                    credores[index] = membros[j];
+                    valores[index] = valor;
+                    index++;
+                }
+            }
+        }
+    }
+
     // Internas
     function _adicionarMembro(address m) private {
         membros.push(m);

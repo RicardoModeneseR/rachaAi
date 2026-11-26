@@ -73,6 +73,7 @@ Getters públicos: `grupos(i)`, `ehGrupo(addr)` e `convitePendente(grupo, convid
 | `confirmarQuitacao(address devedor, uint256 valor)` | o credor | `somenteMembro`, `valorPositivo` | `DividaQuitada` |
 | `getMembros()`, `getDespesas()`, `totalDespesas()` | view | — | — |
 | `saldoDe(address m)` → `int256` (positivo = tem a receber) | view | — | — |
+| `getDividas()` → `(address[] devedores, address[] credores, uint256[] valores)` | view | — | — |
 
 Getters públicos: `nome`, `criador`, `fabrica`, `ehMembro(addr)`, `divida(devedor, credor)` e `MAX_MEMBROS` (20).
 
